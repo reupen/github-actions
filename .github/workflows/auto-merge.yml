@@ -47,6 +47,10 @@ jobs:
               );
             }
 
+      - name: Clone repository
+        if: github.event.pull_request.commits == 1 && github.event.pull_request.user.login == 'pre-commit-ci[bot]'
+        uses: actions/checkout@v4
+
       - name: Run pre-commit hooks
         if: github.event.pull_request.commits == 1 && github.event.pull_request.user.login == 'pre-commit-ci[bot]'
         run: pipx run pre-commit run --all-files
