@@ -1,0 +1,30 @@
+name: Prepare vcpkg and MSBuild
+description: Prepare for a build using MSBuild and vcpkg
+runs:
+  using: composite
+  steps:
+    - uses: actions/checkout@v5
+      with:
+        fetch-depth: 0
+        submodules: true
+
+    - name: Set up MSBuild
+      uses: microsoft/setup-msbuild@v2
+
+    - name: Cache dependencies
+      uses: actions/cache@v4
+      with:
+        path: C:\Users\runneradmin\AppData\Local\vcpkg\archives
+        key: ${{ runner.os }}-vcpkg-archives-${{ hashFiles('vcpkg.json') }}
+
+    - name: Set up vcpkg
+      shell: pwsh
+      run: |
+        git -C C:\vcpkg fetch
+        vcpkg version
+        vcpkg integrate install
+
+    - name: Set up MSBuild logger
+      shell: pwsh
+      run: |
+        Invoke-WebRequest -Uri https://github.com/reupen/msbuild-github-logger/releases/download/v1.0.1/Reupen.MSBuild.GitHubLogger.dll -OutFile "$Env:Temp\Reupen.MSBuild.GitHubLogger.dll"
