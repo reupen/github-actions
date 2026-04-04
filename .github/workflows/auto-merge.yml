@@ -8,6 +8,11 @@ on:
         required: false
         default: ""
         description: Comma-separated list of dependencies to exclude from auto-merging
+      allowed-semver-major-group:
+        type: string
+        required: false
+        default: "submodules"
+        description: Group name to allow auto-merging for if Dependabot flags the update type as major
 
 permissions:
   contents: write
@@ -115,7 +120,10 @@ jobs:
           && (
             github.event.pull_request.user.login != 'dependabot[bot]'
             || (
-              steps.dependabot-metadata.outputs.update-type != 'version-update:semver-major'
+              (
+                steps.dependabot-metadata.outputs.update-type != 'version-update:semver-major'
+                || steps.dependabot-metadata.outputs.dependency-group == inputs.allowed-semver-major-group
+              )
               && steps.check-dependencies.outputs.result == 'false'
             )
           )
