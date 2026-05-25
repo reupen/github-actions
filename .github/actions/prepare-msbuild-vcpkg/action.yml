@@ -20,7 +20,7 @@ runs:
     - name: Set up vcpkg
       shell: pwsh
       run: |
-        git -C C:\vcpkg fetch
+        git -C C:\vcpkg pull
         vcpkg version
         vcpkg integrate install
 
